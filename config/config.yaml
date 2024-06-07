@@ -1,5 +1,7 @@
 embedding_dim: 256
-units: 512
+units: 256
+vocab_size : 10000
+image_feature_dim : 100352
 batch_size: 64
 epochs: 20
 model_save_path: 'models/saved_model'
