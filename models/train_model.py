@@ -1,6 +1,17 @@
 from transformers import AdamW
 import torch
 
+from keras.utils import to_categorical
+
+def data_generator(features, sequences, batch_size, vocab_size):
+    num_samples = len(features)
+    while True:
+        for i in range(0, num_samples, batch_size):
+            batch_features = features[i:i+batch_size]
+            batch_sequences = sequences[i:i+batch_size]
+            batch_labels = to_categorical(batch_sequences, num_classes=vocab_size)
+            yield ([batch_features, batch_sequences], batch_labels)
+
 def train_lstm_cnn_model(model, train_features, train_sequences, val_features, val_sequences, vocab_size, batch_size, epochs):
     history = model.fit(
         [train_features, train_sequences], 
@@ -52,9 +63,8 @@ def train_vit_gpt2_model(train_loader, val_loader, gpt_model, tokenizer, epochs,
 
 def train_model(model, train_features, train_sequences, val_features, val_sequences, vocab_size, batch_size, epochs, model_type):
     if model_type == 'lstm_cnn':
-        return train_lstm_cnn_model(model, train_features, train_sequences, val_features, val_sequences, vocab_size, batch_size, epochs)
+        return train_lstm_cnn_model(model, train_features, train_sequences, val_features, val_sequences, vocab_size, batch_size, epochs,model_type)
     elif model_type == 'vit_gpt2':
-        # Assuming DataLoader objects `train_loader` and `val_loader` are created elsewhere for ViT-GPT2 training
         return train_vit_gpt2_model(train_loader, val_loader, model, tokenizer, epochs, learning_rate)
     else:
         raise ValueError("Unknown model type")
