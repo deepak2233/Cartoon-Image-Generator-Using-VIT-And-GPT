@@ -1,0 +1,12 @@
+tensorflow
+torch
+transformers
+datasets
+matplotlib
+seaborn
+pandas
+scikit-learn
+nltk
+rouge-score
+PyYAML
+wordcloud
