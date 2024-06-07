@@ -68,7 +68,7 @@ cartoon_captioning/
 ## 🚀 Running Script
 
 ```
-python train.py --config config/config.yaml
+python train.py --config config/config.yaml --model_type lstm_cnn
 
 python train.py --config config/config.yaml --model_type vit_gpt2
 ```
