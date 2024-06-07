@@ -1,14 +1,14 @@
 # 📚 Cartoon Captioning Project
 
 Welcome to the Cartoon Captioning Project! This project aims to generate captions for cartoon images using deep learning or transformer based techniques. You can choose between two model architectures: **LSTM-CNN** and **ViT-GPT2**.
-
+---
 ## 🌟 Features
 
 - **Data Loading and Preprocessing**
 - **Exploratory Data Analysis (EDA)**
 - **Model Training and Evaluation**
 - **Visualization of Results**
-
+---
 ## 🏗️ Directory Structure
 
 ```plaintext
@@ -36,17 +36,17 @@ cartoon_captioning/
 ```
 </br>
 
-
+---
 ## ⚙️ Installation
 
 ```
   cd cartoon_captioning
   python -m venv cap_env
   source cap_env/bin/activate
+  pip install -r requirements.txt
+
 ```
-
-```pip install -r requirements.txt'```
-
+---
 
 ## 🔧 Configuration
 ```embedding_dim: 256
@@ -59,7 +59,7 @@ cartoon_captioning/
     'vit_gpt2' for using 'ViT-GPT2' model
 
 ```
-
+---
 ## 🚀 Running Script
 
 ```
@@ -67,7 +67,7 @@ python train.py --config config/config.yaml
 
 python train.py --config config/config.yaml --model_type vit_gpt2
 ```
-
+---
 ## 🖼️ Example Outputs
 
 ### EDA 
@@ -84,13 +84,13 @@ python train.py --config config/config.yaml --model_type vit_gpt2
     <img src='eda/plots/wordcloud.png' alt='Word Cloud'>
 </div>
 
-
+---
 ### Models Training
 
 <div align="center">
     <img src='eda/plots/training.png' alt='Caption Length Distribution'>
 </div>
-
+---
 ## 🌐 Running App
 
 ```
