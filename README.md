@@ -39,13 +39,13 @@ cartoon_captioning/
 
 ## ⚙️ Installation
 
-```pip install -r requirements.txt'```
-
 ```
   cd cartoon_captioning
   python -m venv cap_env
   source cap_env/bin/activate
 ```
+
+```pip install -r requirements.txt'```
 
 
 ## 🔧 Configuration
@@ -85,7 +85,7 @@ python train.py --config config/config.yaml --model_type vit_gpt2
 </div>
 
 
-### MOdels Training
+### Models Training
 
 <div align="center">
     <img src='eda/plots/training.png' alt='Caption Length Distribution'>
