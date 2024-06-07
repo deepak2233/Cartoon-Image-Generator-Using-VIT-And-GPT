@@ -10,7 +10,7 @@ from eda.eda import plot_caption_length_distribution, plot_common_words, plot_to
 from utils.text_processing import preprocess_text
 from utils.image_processing import preprocess_and_extract_features, preprocess_and_extract_features_vit
 from models.build_model import build_model
-from models.train_model import train_model
+from models.train_model import train_model, data_generator
 from models.evaluate_model import evaluate_model
 
 def main(config, model_type):
@@ -50,19 +50,24 @@ def main(config, model_type):
         val_features = preprocess_and_extract_features(df_val['image'])
         test_features = preprocess_and_extract_features(df_test['image'])
 
+    train_generator = data_generator(train_features, train_sequences, config['batch_size'], vocab_size)
+    val_generator = data_generator(val_features, val_sequences, config['batch_size'], vocab_size)
+
     # Build and compile model within the strategy scope
     with strategy.scope():
         print('###############Model Building####################')
         model = build_model(max_length, vocab_size, config['embedding_dim'], config['units'], train_features.shape[1], model_type)
+        print('######################MOdel Summary###################')
+        model.summary()
         model.compile(loss='categorical_crossentropy', optimizer='adam')
 
     print('###############Model Training####################')
     # Train model
-    history = train_model(model, train_features, train_sequences, val_features, val_sequences, vocab_size, config['batch_size'], config['epochs'])
+    history = train_model(model, train_generator, val_generator, vocab_size, config['batch_size'], config['epochs'], model_type)
 
     # Evaluate model
     print('###############Model Evaluating####################')
-    bleu_score, rouge_score = evaluate_model(model, test_features, df_test, tokenizer, max_length)
+    bleu_score, rouge_score = evaluate_model(model, test_features, df_test, tokenizer, max_length, model_type)
 
     print('###############Save the Model####################')
     # Save model
@@ -80,4 +85,3 @@ if __name__ == "__main__":
         config = yaml.safe_load(file)
 
     main(config, args.model_type)
-
