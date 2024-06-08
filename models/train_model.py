@@ -3,15 +3,25 @@ from transformers import AdamW
 import torch
 from keras.utils import to_categorical
 
-def data_generator(features, sequences, batch_size, vocab_size, max_length):
+def data_generator(features, sequences, batch_size, vocab_size):
     num_samples = len(features)
     while True:
-        for i in range(0, num_samples, batch_size):
-            batch_features = features[i:i + batch_size]
-            batch_sequences = sequences[i:i + batch_size]
-            batch_sequences_padded = tf.keras.preprocessing.sequence.pad_sequences(batch_sequences, maxlen=max_length, padding='post')
-            batch_labels = to_categorical(batch_sequences_padded, num_classes=vocab_size)
-            yield ((batch_features, batch_sequences_padded), batch_labels)
+        for offset in range(0, num_samples, batch_size):
+            batch_features = features[offset:offset + batch_size]
+            batch_sequences = sequences[offset:offset + batch_size]
+
+            # Add a time dimension to batch_features
+            batch_features = batch_features[:, np.newaxis, :]
+
+            batch_labels = []
+            for seq in batch_sequences:
+                # One-hot encode the sequence
+                one_hot_seq = tf.keras.utils.to_categorical(seq, num_classes=vocab_size)
+                batch_labels.append(one_hot_seq)
+
+            batch_labels = np.array(batch_labels)
+
+            yield ([batch_features, batch_sequences], batch_labels)
 
 
 def create_tf_data_generator(features, sequences, batch_size, vocab_size, max_length):
