@@ -53,14 +53,17 @@ cartoon_captioning/
 ---
 
 ## 🔧 Configuration
-```embedding_dim: 256
-    units: 512
-    batch_size: 64
-    epochs: 20
-    model_save_path: 'models/saved_model'
-    model_type: 'lstm_cnn'  
-    or 
-    'vit_gpt2' for using 'ViT-GPT2' model
+```
+embedding_dim: 256
+units: 256
+vocab_size : 10000
+image_feature_dim : 100352
+batch_size: 32
+epochs: 2
+model_save_path: 'models/saved_model'
+tokenizer_path: 'models/tokenizer.pkl'
+max_length: 40
+model_type: 'lstm_cnn'  # or 'vit_gpt2' for using 'ViT-GPT2' model
 
 ```
 ---
