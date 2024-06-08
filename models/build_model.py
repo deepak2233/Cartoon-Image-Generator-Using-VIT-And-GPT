@@ -1,14 +1,10 @@
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, LSTM, Dense, Embedding
+from tensorflow.keras.layers import Input, LSTM, Dense, Embedding, Concatenate, Dropout, Reshape, RepeatVector
 from transformers import TFGPT2LMHeadModel
-from tensorflow.keras.layers import Concatenate, LSTM, Dense, Embedding, Input, Dropout, Reshape, RepeatVector
-
 import tensorflow as tf
 
-
 def build_model(max_length, vocab_size, embedding_dim, units, feature_shape, model_type):
-
-    if model_type =='lstm_cnn':
+    if model_type == 'lstm_cnn':
         # Image input
         image_input = Input(shape=(feature_shape,))
         
@@ -18,7 +14,7 @@ def build_model(max_length, vocab_size, embedding_dim, units, feature_shape, mod
         # Reshape image features to match the shape of text embeddings
         image_features = Reshape((1, feature_shape))(image_input)
         
-        # Repeat image features to match the sequence length
+        # LSTM layer to process image features
         image_features = LSTM(units, return_sequences=False)(image_features)
         image_features = RepeatVector(max_length)(image_features)
         
@@ -42,7 +38,6 @@ def build_model(max_length, vocab_size, embedding_dim, units, feature_shape, mod
         model = Model(inputs=[image_input, text_input], outputs=output)
         
         return model
-
         
     elif model_type == 'vit_gpt2':
         # Example ViT-GPT2 model
@@ -58,8 +53,4 @@ def build_model(max_length, vocab_size, embedding_dim, units, feature_shape, mod
         decoder = Dense(vocab_size, activation='softmax')(gpt2_output.logits)
         model = Model(inputs=[image_input, caption_input], outputs=decoder)
         
-    return model
-
-
-
-
+        return model
