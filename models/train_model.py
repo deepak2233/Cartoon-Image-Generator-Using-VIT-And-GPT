@@ -2,26 +2,22 @@ import tensorflow as tf
 from transformers import AdamW
 import torch
 from keras.utils import to_categorical
+import numpy as np
+import tensorflow as tf
 
 def data_generator(features, sequences, batch_size, vocab_size):
-    num_samples = len(features)
+    batch_features = []
+    batch_labels = []
     while True:
-        for offset in range(0, num_samples, batch_size):
-            batch_features = features[offset:offset + batch_size]
-            batch_sequences = sequences[offset:offset + batch_size]
-
-            # Add a time dimension to batch_features
-            batch_features = batch_features[:, np.newaxis, :]
-
-            batch_labels = []
-            for seq in batch_sequences:
-                # One-hot encode the sequence
-                one_hot_seq = tf.keras.utils.to_categorical(seq, num_classes=vocab_size)
-                batch_labels.append(one_hot_seq)
-
-            batch_labels = np.array(batch_labels)
-
-            yield ([batch_features, batch_sequences], batch_labels)
+        for i in range(len(features)):
+            batch_features.append(features[i])
+            batch_labels.append(tf.keras.utils.to_categorical(sequences[i], num_classes=vocab_size))
+            if len(batch_features) == batch_size:
+                yield ([np.array(batch_features), np.array(sequences[i:i+batch_size])], np.array(batch_labels))
+                batch_features = []
+                batch_labels = []
+        if batch_features:  # Yield remaining data if not empty
+            yield ([np.array(batch_features), np.array(sequences[len(features)-len(batch_features):])], np.array(batch_labels))
 
 
 def create_tf_data_generator(features, sequences, batch_size, vocab_size, max_length):
