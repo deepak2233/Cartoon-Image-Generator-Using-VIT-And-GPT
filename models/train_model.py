@@ -11,7 +11,8 @@ def data_generator(features, sequences, batch_size, vocab_size, max_length):
             batch_sequences = sequences[i:i + batch_size]
             batch_sequences_padded = tf.keras.preprocessing.sequence.pad_sequences(batch_sequences, maxlen=max_length, padding='post')
             batch_labels = to_categorical(batch_sequences_padded, num_classes=vocab_size)
-            yield ([batch_features, batch_sequences_padded], batch_labels)
+            yield ((batch_features, batch_sequences_padded), batch_labels)
+
 
 def create_tf_data_generator(features, sequences, batch_size, vocab_size, max_length):
     output_signature = (
