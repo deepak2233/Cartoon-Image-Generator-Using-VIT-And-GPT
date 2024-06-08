@@ -10,3 +10,4 @@ nltk
 rouge-score
 PyYAML
 wordcloud
+tf-keras
