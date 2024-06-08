@@ -3,6 +3,7 @@ import yaml
 import os
 import warnings
 import tensorflow as tf
+import numpy as np
 import tf_keras  # Ensure compatible version of tf-keras is installed
 from data.load_data import load_caption_data
 from eda.eda import plot_caption_length_distribution, plot_common_words, plot_top_ngrams, plot_wordcloud, display_sample_images
@@ -67,10 +68,10 @@ def main(config, model_type):
         args=[train_features, train_sequences, batch_size, vocab_size],
         output_signature=(
             (
-                tf.TensorSpec(shape=(None, train_features.shape[1]), dtype=tf.float32),
-                tf.TensorSpec(shape=(None,), dtype=tf.int32)
+                tf.TensorSpec(shape=(None, 1, train_features.shape[1]), dtype=tf.float32),
+                tf.TensorSpec(shape=(None, train_sequences.shape[1]), dtype=tf.int32)
             ),
-            tf.TensorSpec(shape=(None, vocab_size), dtype=tf.float32)
+            tf.TensorSpec(shape=(None, train_sequences.shape[1], vocab_size), dtype=tf.float32)
         )
     )
     val_dataset = tf.data.Dataset.from_generator(
@@ -78,10 +79,10 @@ def main(config, model_type):
         args=[val_features, val_sequences, batch_size, vocab_size],
         output_signature=(
             (
-                tf.TensorSpec(shape=(None, val_features.shape[1]), dtype=tf.float32),
-                tf.TensorSpec(shape=(None,), dtype=tf.int32)
+                tf.TensorSpec(shape=(None, 1, val_features.shape[1]), dtype=tf.float32),
+                tf.TensorSpec(shape=(None, val_sequences.shape[1]), dtype=tf.int32)
             ),
-            tf.TensorSpec(shape=(None, vocab_size), dtype=tf.float32)
+            tf.TensorSpec(shape=(None, val_sequences.shape[1], vocab_size), dtype=tf.float32)
         )
     )
     history = model.fit(
