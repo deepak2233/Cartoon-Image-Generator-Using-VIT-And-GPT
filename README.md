@@ -44,7 +44,7 @@ cartoon_captioning/
 ## ⚙️ Installation
 
 ```
-  cd cartoon_captioning
+  cd cartoon-image-generator
   python -m venv cap_env
   source cap_env/bin/activate
   pip install -r requirements.txt
