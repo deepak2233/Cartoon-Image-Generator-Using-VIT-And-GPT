@@ -4,7 +4,6 @@ import os
 import warnings
 import tensorflow as tf
 import tf_keras  # Ensure compatible version of tf-keras is installed
-
 from data.load_data import load_caption_data
 from eda.eda import plot_caption_length_distribution, plot_common_words, plot_top_ngrams, plot_wordcloud, display_sample_images
 from utils.text_processing import preprocess_text
@@ -50,8 +49,8 @@ def main(config, model_type):
         val_features = preprocess_and_extract_features(df_val['image'])
         test_features = preprocess_and_extract_features(df_test['image'])
 
-    train_generator = data_generator(train_features, train_sequences, config['batch_size'], vocab_size)
-    val_generator = data_generator(val_features, val_sequences, config['batch_size'], vocab_size)
+    # Define batch size
+    batch_size = config['batch_size']
 
     # Build and compile model within the strategy scope
     with strategy.scope():
@@ -63,7 +62,33 @@ def main(config, model_type):
 
     print('###############Model Training####################')
     # Train model
-    history = train_model(model, train_generator, val_generator, vocab_size, config['batch_size'], config['epochs'], model_type)
+    train_dataset = tf.data.Dataset.from_generator(
+        data_generator,
+        args=[train_features, train_sequences, batch_size, vocab_size],
+        output_signature=(
+            (
+                tf.TensorSpec(shape=(None, train_features.shape[1]), dtype=tf.float32),
+                tf.TensorSpec(shape=(None,), dtype=tf.int32)
+            ),
+            tf.TensorSpec(shape=(None, vocab_size), dtype=tf.float32)
+        )
+    )
+    val_dataset = tf.data.Dataset.from_generator(
+        data_generator,
+        args=[val_features, val_sequences, batch_size, vocab_size],
+        output_signature=(
+            (
+                tf.TensorSpec(shape=(None, val_features.shape[1]), dtype=tf.float32),
+                tf.TensorSpec(shape=(None,), dtype=tf.int32)
+            ),
+            tf.TensorSpec(shape=(None, vocab_size), dtype=tf.float32)
+        )
+    )
+    history = model.fit(
+        train_dataset,
+        validation_data=val_dataset,
+        epochs=config['epochs']
+    )
 
     # Evaluate model
     print('###############Model Evaluating####################')
